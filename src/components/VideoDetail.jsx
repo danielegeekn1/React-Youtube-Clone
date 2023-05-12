@@ -7,10 +7,14 @@ import { Videos } from "./";
 import { fetchFromApi } from "../utils/fetchFromApi";
 const VideoDetail = () => {
   const [videoDetails, setVideoDetails] = useState(null);
+  const [relVideos, setRelVideos] = useState(null);
   const { id } = useParams();
   useEffect(() => {
     fetchFromApi(`videos?part=snippet,statistics&id=${id}`).then((data) =>
       setVideoDetails(data.items[0])
+    );
+    fetchFromApi(`search?part=snippet&relatedToVideoId=${id}&type=video`).then(
+      (data) => setRelVideos(data.items)
     );
   }, [id]);
   if (!videoDetails?.snippet) return "Loading...";
@@ -58,6 +62,14 @@ const VideoDetail = () => {
           </Box>
         </Box>
       </Stack>
+      <Box
+        px={2}
+        py={{ md: 1, xs: 5 }}
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Videos videos={relVideos} direction="column" />
+      </Box>
     </Box>
   );
 };
